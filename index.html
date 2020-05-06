@@ -35,21 +35,13 @@
           );
           camera.attachControl(canvas, true);
 
-          var light = new BABYLON.PointLight(
-            "pointLight",
+          var light = new BABYLON.SpotLight(
+            "spotLight",
             new BABYLON.Vector3(0, 10, 0),
+            new BABYLON.Vector3(0, -1, 0),
+            BABYLON.Tools.ToRadians(45), // degrees the light fans out
+            0.1, // falloff/decay of the light over distance
             scene
-          );
-          light.diffuse = new BABYLON.Color3(1, 0, 0);
-
-          scene.actionManager = new BABYLON.ActionManager(scene);
-          scene.actionManager.registerAction(
-            new BABYLON.ExecuteCodeAction(
-              { trigger: BABYLON.ActionManager.OnKeyUpTrigger, parameter: " " },
-              function() {
-                light.setEnabled(!light.isEnabled());
-              }
-            )
           );
 
           return scene;
@@ -57,9 +49,8 @@
 
         var scene = createScene();
         engine.runRenderLoop(function() {
-          var light = scene.getLightByName("pointLight");
-          light.diffuse.g += 0.01;
-          light.diffuse.b += 0.01;
+          var light = scene.getLightByName("spotLight");
+          light.position.y -= 0.01;
           scene.render();
         });
       });
