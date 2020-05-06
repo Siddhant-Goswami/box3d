@@ -23,24 +23,43 @@
         var createScene = function() {
           var scene = new BABYLON.Scene(engine);
           scene.clearColor = new BABYLON.Color3.White();
-          var camera = new BABYLON.FreeCamera(
-            "camera1",
-            new BABYLON.Vector3(0, 0, -10),
-            scene
-          );
-          camera.setTarget(BABYLON.Vector3.Zero());
-          camera.attachControl(canvas, true);
-          camera.keysUp.push(87); //W
-          camera.keysDown.push(83); //D
-          camera.keysLeft.push(65); //A
-          camera.keysRight.push(68); //S
 
           var box = BABYLON.Mesh.CreateBox("Box", 4.0, scene);
+          var camera = new BABYLON.ArcRotateCamera(
+            "arcCam",
+            BABYLON.Tools.ToRadians(45),
+            BABYLON.Tools.ToRadians(45),
+            10.0,
+            box.position,
+            scene
+          );
+          camera.attachControl(canvas, true);
+
+          var light = new BABYLON.PointLight(
+            "pointLight",
+            new BABYLON.Vector3(0, 10, 0),
+            scene
+          );
+          light.diffuse = new BABYLON.Color3(1, 0, 0);
+
+          scene.actionManager = new BABYLON.ActionManager(scene);
+          scene.actionManager.registerAction(
+            new BABYLON.ExecuteCodeAction(
+              { trigger: BABYLON.ActionManager.OnKeyUpTrigger, parameter: " " },
+              function() {
+                light.setEnabled(!light.isEnabled());
+              }
+            )
+          );
+
           return scene;
         };
 
         var scene = createScene();
         engine.runRenderLoop(function() {
+          var light = scene.getLightByName("pointLight");
+          light.diffuse.g += 0.01;
+          light.diffuse.b += 0.01;
           scene.render();
         });
       });
