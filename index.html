@@ -23,7 +23,6 @@
         var createScene = function() {
           var scene = new BABYLON.Scene(engine);
           scene.clearColor = new BABYLON.Color3.White();
-
           var box = BABYLON.Mesh.CreateBox("Box", 4.0, scene);
           var camera = new BABYLON.ArcRotateCamera(
             "arcCam",
@@ -33,24 +32,18 @@
             box.position,
             scene
           );
+
           camera.attachControl(canvas, true);
 
-          var light = new BABYLON.SpotLight(
-            "spotLight",
-            new BABYLON.Vector3(0, 10, 0),
-            new BABYLON.Vector3(0, -1, 0),
-            BABYLON.Tools.ToRadians(45), // degrees the light fans out
-            0.1, // falloff/decay of the light over distance
-            scene
-          );
+          var material = new BABYLON.StandardMaterial("material1", scene);
+          material.wireframe = true;
+          box.material = material;
 
           return scene;
         };
 
         var scene = createScene();
         engine.runRenderLoop(function() {
-          var light = scene.getLightByName("spotLight");
-          light.position.y -= 0.01;
           scene.render();
         });
       });
